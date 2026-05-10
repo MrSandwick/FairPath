@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">FairPath</string>
+    <string name="fairpath">FairPath</string>
+    <string name="your_career_fair_companion">Your career fair companion</string>
+    <string name="primary_actions">Primary Actions</string>
+    <string name="scan_badge">Scan Badge</string>
+    <string name="secondary_actions">Secondary Actions</string>
+    <string name="contacts">Contacts</string>
+    <string name="export">Export</string>
+    <string name="follow_up">Follow-up</string>
 </resources>
