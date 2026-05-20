@@ -8,4 +8,65 @@
     <string name="contacts">Contacts</string>
     <string name="export">Export</string>
     <string name="follow_up">Follow-up</string>
+
+    <!-- Scan / camera placeholder -->
+    <string name="scan_camera_coming_soon">Camera scanning coming soon</string>
+    <string name="scan_enter_manually">Enter Manually</string>
+
+    <!-- Contacts screen -->
+    <string name="contacts_title">Contacts</string>
+    <string name="search_contacts">Search contacts…</string>
+    <string name="sort_most_recent">Most Recent</string>
+    <string name="no_contacts_yet">No contacts yet</string>
+    <string name="no_contacts_description">Scan your first business card to get started</string>
+
+    <!-- Manual entry screen -->
+    <string name="review_contact">Review Contact</string>
+    <string name="field_name">Name *</string>
+    <string name="hint_full_name">Full name</string>
+    <string name="field_company">Company</string>
+    <string name="hint_company_name">Company name</string>
+    <string name="field_role">Role</string>
+    <string name="hint_job_title">Job title</string>
+    <string name="field_email">Email</string>
+    <string name="hint_email">email@example.com</string>
+    <string name="field_phone">Phone</string>
+    <string name="hint_phone">+1 (555) 000-0000</string>
+    <string name="field_quick_note">Quick Note (optional)</string>
+    <string name="hint_quick_note">Add a quick note about your conversation…</string>
+    <string name="field_tags">Tags</string>
+    <string name="tags_suggested">Suggested (tap to add):</string>
+    <string name="tag_high_priority">High Priority</string>
+    <string name="tag_follow_up_soon">Follow-up Soon</string>
+    <string name="tag_interesting">Interesting</string>
+    <string name="hint_custom_tag">Add custom tag</string>
+    <string name="tags_helper">Add tags to organize and find contacts easily</string>
+    <string name="button_save_contact">Save Contact</string>
+
+    <!-- Export screen -->
+    <string name="export_title">Export Contacts</string>
+    <string name="export_ready">Ready to Export</string>
+    <string name="export_contact_count">%1$d contact(s) saved</string>
+    <string name="export_csv_title">Export as CSV</string>
+    <string name="export_csv_description">Download a spreadsheet file compatible with Excel, Google Sheets, and other apps</string>
+    <string name="button_download_csv">Download CSV</string>
+    <string name="export_vcf_title">Export as VCF</string>
+    <string name="export_vcf_description">Download vCard file to import directly into your phone\'s contacts app</string>
+    <string name="button_download_vcf">Download VCF</string>
+    <string name="export_no_contacts">Scan some contacts first to enable export</string>
+
+    <!-- Follow-up screen -->
+    <string name="follow_up_title">Follow-up Template</string>
+    <string name="follow_up_instructions">Customize this template before sending. Placeholder text will be replaced with contact details.</string>
+    <string name="send_later">Send Later</string>
+    <string name="schedule_tomorrow">Tomorrow</string>
+    <string name="schedule_next_business_day">Next Business Day</string>
+    <string name="schedule_next_week">Next Week</string>
+    <string name="schedule_helper">Copies message and shows reminder date</string>
+    <string name="button_share">Share</string>
+    <string name="button_copy_to_clipboard">Copy to Clipboard</string>
+    <string name="email_signature_title">Email Signature</string>
+    <string name="email_signature_description">Add your signature to automatically include in follow-ups</string>
+    <string name="hint_signature">Your Name\nYour Title\nyour.email@example.com\n(555) 123-4567</string>
+    <string name="button_save_signature">Save Signature</string>
 </resources>
