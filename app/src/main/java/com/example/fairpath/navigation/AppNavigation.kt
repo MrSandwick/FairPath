@@ -8,14 +8,16 @@ import com.example.fairpath.screens.ContactsScreen
 import com.example.fairpath.screens.ExportScreen
 import com.example.fairpath.screens.FollowUpScreen
 import com.example.fairpath.screens.HomeScreen
+import com.example.fairpath.screens.ManualEntryScreen
 import com.example.fairpath.screens.ScanScreen
 
 sealed class Screen(val route: String) {
-    object Home     : Screen("home")
-    object Scan     : Screen("scan")
-    object Contacts : Screen("contacts")
-    object Export   : Screen("export")
-    object FollowUp : Screen("follow_up")
+    object Home        : Screen("home")
+    object Scan        : Screen("scan")
+    object ManualEntry : Screen("manual_entry")
+    object Contacts    : Screen("contacts")
+    object Export      : Screen("export")
+    object FollowUp    : Screen("follow_up")
 }
 
 @Composable
@@ -31,7 +33,8 @@ fun AppNavigation() {
                 onFollowUpClick = { navController.navigate(Screen.FollowUp.route) }
             )
         }
-        composable(Screen.Scan.route)     { ScanScreen(navController) }
+        composable(Screen.Scan.route)        { ScanScreen(navController) }
+        composable(Screen.ManualEntry.route) { ManualEntryScreen(navController) }
         composable(Screen.Contacts.route) { ContactsScreen(navController) }
         composable(Screen.Export.route)   { ExportScreen(navController) }
         composable(Screen.FollowUp.route) { FollowUpScreen(navController) }
