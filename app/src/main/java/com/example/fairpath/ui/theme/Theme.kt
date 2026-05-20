@@ -14,7 +14,8 @@ private val LightColorScheme = lightColorScheme(
     surface          = FairPathSurface,
     onSurface        = FairPathOnSurface,
     onSurfaceVariant = FairPathOnSurfaceVariant,
-    outline          = FairPathOutline
+    outline          = FairPathOutline,
+    surfaceVariant   = FairPathInputBackground
 )
 
 private val DarkColorScheme = darkColorScheme(
@@ -25,7 +26,8 @@ private val DarkColorScheme = darkColorScheme(
     surface          = FairPathDarkSurface,
     onSurface        = FairPathDarkOnSurface,
     onSurfaceVariant = FairPathDarkOnSurfaceVariant,
-    outline          = FairPathDarkOutline
+    outline          = FairPathDarkOutline,
+    surfaceVariant   = FairPathDarkInputBackground
 )
 
 @Composable
