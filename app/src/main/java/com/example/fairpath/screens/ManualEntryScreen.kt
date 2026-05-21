@@ -41,6 +41,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.fairpath.R
+import com.example.fairpath.data.Contact
+import com.example.fairpath.data.ContactRepository
+import com.example.fairpath.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -219,7 +222,22 @@ fun ManualEntryScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
-                onClick = { navController.popBackStack() },
+                onClick = {
+                    val newContact = Contact(
+                        name = name.trim(),
+                        company = company.trim(),
+                        role = role.trim(),
+                        email = email.trim(),
+                        phone = phone.trim(),
+                        note = note.trim(),
+                        tags = appliedTags.toList()
+                    )
+                    ContactRepository.add(newContact)
+                    navController.navigate(Screen.ContactCard.createRoute(newContact.id)) {
+                        popUpTo(Screen.ManualEntry.route) { inclusive = true }
+                    }
+                },
+                enabled = name.isNotBlank(),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(stringResource(R.string.button_save_contact))
