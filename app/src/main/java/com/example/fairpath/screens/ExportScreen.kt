@@ -34,11 +34,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.fairpath.R
+import com.example.fairpath.data.ContactRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExportScreen(navController: NavController) {
-    val contactCount = 1
+    val contactCount = ContactRepository.contacts.size
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
