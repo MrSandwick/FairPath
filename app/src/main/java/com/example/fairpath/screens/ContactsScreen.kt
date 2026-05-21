@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -30,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,13 +52,17 @@ import com.example.fairpath.navigation.Screen
 fun ContactsScreen(navController: NavController) {
     var query by remember { mutableStateOf("") }
 
-    val filtered = if (query.isBlank()) {
-        ContactRepository.contacts.toList()
-    } else {
-        ContactRepository.contacts.filter {
-            it.name.contains(query, ignoreCase = true) ||
-                it.role.contains(query, ignoreCase = true) ||
-                it.company.contains(query, ignoreCase = true)
+    val filtered by remember {
+        derivedStateOf {
+            if (query.isBlank()) {
+                ContactRepository.contacts.toList()
+            } else {
+                ContactRepository.contacts.filter {
+                    it.name.contains(query, ignoreCase = true) ||
+                        it.role.contains(query, ignoreCase = true) ||
+                        it.company.contains(query, ignoreCase = true)
+                }
+            }
         }
     }
 
@@ -103,7 +109,6 @@ fun ContactsScreen(navController: NavController) {
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
@@ -112,11 +117,12 @@ fun ContactsScreen(navController: NavController) {
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(18.dp)
                 )
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = stringResource(R.string.sort_most_recent),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(start = 4.dp)
+                    modifier = Modifier.weight(1f)
                 )
             }
 
@@ -155,11 +161,16 @@ private fun ContactListCard(contact: Contact, onClick: () -> Unit) {
                 color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = "${contact.role} • ${contact.company}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            val subtitle = listOf(contact.role, contact.company)
+                .filter { it.isNotBlank() }
+                .joinToString(" • ")
+            if (subtitle.isNotBlank()) {
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }
