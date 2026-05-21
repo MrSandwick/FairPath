@@ -13,7 +13,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Schedule
@@ -33,7 +32,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -45,16 +43,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.fairpath.R
+import com.example.fairpath.data.Signature
+import com.example.fairpath.data.SignatureRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FollowUpScreen(navController: NavController) {
     var message by remember { mutableStateOf("") }
     var showSignatureDialog by remember { mutableStateOf(false) }
-    var signature by remember { mutableStateOf("") }
+
+    val sig = SignatureRepository.signature
+    val fullText = if (sig.hasContent) "$message\n\n--\n${sig.formatted}" else message
 
     val fieldColors = OutlinedTextFieldDefaults.colors(
         unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -92,7 +95,6 @@ fun FollowUpScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Instruction card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
@@ -106,18 +108,39 @@ fun FollowUpScreen(navController: NavController) {
                 )
             }
 
-            // Message composition field
             OutlinedTextField(
                 value = message,
                 onValueChange = { message = it },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(180.dp),
-                placeholder = { Text(stringResource(R.string.follow_up_instructions)) },
+                placeholder = { Text(stringResource(R.string.follow_up_message_hint)) },
                 colors = fieldColors
             )
 
-            // Send Later section
+            if (sig.hasContent) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = stringResource(R.string.sig_preview_label),
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = sig.formatted,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
@@ -168,7 +191,6 @@ fun FollowUpScreen(navController: NavController) {
                 }
             }
 
-            // Action buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -207,9 +229,11 @@ fun FollowUpScreen(navController: NavController) {
 
     if (showSignatureDialog) {
         EmailSignatureDialog(
-            signature = signature,
-            onSignatureChange = { signature = it },
-            onSave = { showSignatureDialog = false },
+            current = sig,
+            onSave = { name, title, email, phone ->
+                SignatureRepository.update(name, title, email, phone)
+                showSignatureDialog = false
+            },
             onDismiss = { showSignatureDialog = false },
             fieldColors = fieldColors
         )
@@ -218,42 +242,113 @@ fun FollowUpScreen(navController: NavController) {
 
 @Composable
 private fun EmailSignatureDialog(
-    signature: String,
-    onSignatureChange: (String) -> Unit,
-    onSave: () -> Unit,
+    current: Signature,
+    onSave: (name: String, title: String, email: String, phone: String) -> Unit,
     onDismiss: () -> Unit,
     fieldColors: androidx.compose.material3.TextFieldColors
 ) {
+    var name by remember { mutableStateOf(current.name) }
+    var title by remember { mutableStateOf(current.title) }
+    var email by remember { mutableStateOf(current.email) }
+    var phone by remember { mutableStateOf(current.phone) }
+
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.email_signature_title)) },
+        title = {
+            Text(
+                text = stringResource(R.string.email_signature_title),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(
                     text = stringResource(R.string.email_signature_description),
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                OutlinedTextField(
-                    value = signature,
-                    onValueChange = onSignatureChange,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(140.dp),
-                    placeholder = { Text(stringResource(R.string.hint_signature)) },
-                    colors = fieldColors
+                SigField(
+                    label = stringResource(R.string.sig_label_name),
+                    value = name,
+                    onValueChange = { name = it },
+                    placeholder = stringResource(R.string.sig_hint_name),
+                    fieldColors = fieldColors
+                )
+                SigField(
+                    label = stringResource(R.string.sig_label_title),
+                    value = title,
+                    onValueChange = { title = it },
+                    placeholder = stringResource(R.string.sig_hint_title),
+                    fieldColors = fieldColors
+                )
+                SigField(
+                    label = stringResource(R.string.field_email),
+                    value = email,
+                    onValueChange = { email = it },
+                    placeholder = stringResource(R.string.hint_email),
+                    fieldColors = fieldColors
+                )
+                SigField(
+                    label = stringResource(R.string.field_phone),
+                    value = phone,
+                    onValueChange = { phone = it },
+                    placeholder = stringResource(R.string.hint_phone),
+                    fieldColors = fieldColors
                 )
             }
         },
         confirmButton = {
-            Button(onClick = onSave) {
+            Button(
+                onClick = { onSave(name, title, email, phone) },
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.small,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.secondaryContainer
+                )
+            ) {
                 Text(stringResource(R.string.button_save_signature))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Icon(Icons.Default.Close, contentDescription = null)
+            IconButton(onClick = onDismiss) {
+                Icon(
+                    Icons.Default.Close,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     )
+}
+
+@Composable
+private fun SigField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    fieldColors: androidx.compose.material3.TextFieldColors
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChange,
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = { Text(placeholder) },
+            singleLine = true,
+            colors = fieldColors
+        )
+    }
 }
