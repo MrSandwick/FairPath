@@ -41,21 +41,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.fairpath.R
-
-private data class Contact(val name: String, val role: String, val company: String)
+import com.example.fairpath.data.Contact
+import com.example.fairpath.data.ContactRepository
+import com.example.fairpath.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContactsScreen(navController: NavController) {
-    val contacts = remember {
-        listOf(Contact("Mike", "Full-stack Developer", "Amazon"))
-    }
-
     var query by remember { mutableStateOf("") }
 
-    val filtered = remember(query) {
-        if (query.isBlank()) contacts
-        else contacts.filter {
+    val filtered = if (query.isBlank()) {
+        ContactRepository.contacts.toList()
+    } else {
+        ContactRepository.contacts.filter {
             it.name.contains(query, ignoreCase = true) ||
                 it.role.contains(query, ignoreCase = true) ||
                 it.company.contains(query, ignoreCase = true)
@@ -129,7 +127,10 @@ fun ContactsScreen(navController: NavController) {
             } else {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     items(filtered) { contact ->
-                        ContactCard(contact)
+                        ContactListCard(
+                            contact = contact,
+                            onClick = { navController.navigate(Screen.ContactCard.createRoute(contact.id)) }
+                        )
                     }
                 }
             }
@@ -137,9 +138,11 @@ fun ContactsScreen(navController: NavController) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ContactCard(contact: Contact) {
+private fun ContactListCard(contact: Contact, onClick: () -> Unit) {
     Card(
+        onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)

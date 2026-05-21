@@ -55,6 +55,18 @@
     <string name="button_download_vcf">Download VCF</string>
     <string name="export_no_contacts">Scan some contacts first to enable export</string>
 
+    <!-- Contact Card screen -->
+    <string name="contact_details_title">Contact Details</string>
+    <string name="delete_contact">Delete contact</string>
+    <string name="label_role">Role</string>
+    <string name="label_company">Company</string>
+    <string name="label_email">Email</string>
+    <string name="label_phone">Phone</string>
+    <string name="label_quick_note">Quick Note</string>
+    <string name="hint_quick_note_card">Add a short note about your conversation…</string>
+    <string name="note_autosaves">Note auto-saves as you type</string>
+    <string name="button_send_follow_up">Send Follow-up</string>
+
     <!-- Follow-up screen -->
     <string name="follow_up_title">Follow-up Template</string>
     <string name="follow_up_instructions">Customize this template before sending. Placeholder text will be replaced with contact details.</string>

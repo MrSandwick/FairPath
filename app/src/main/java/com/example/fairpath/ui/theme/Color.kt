@@ -13,6 +13,9 @@ val FairPathOnSurfaceVariant = Color(0xFF64748B)
 val FairPathOutline          = Color(0xFFE2E8F0)
 val FairPathInputBackground  = Color(0xFFF3F3F5)
 
+val FairPathSecondaryContainer     = Color(0xFFECEEF2)
+val FairPathOnSecondaryContainer   = Color(0xFF030213)
+
 // Dark
 val FairPathDarkPrimary          = Color(0xFF7B6FF0)
 val FairPathDarkOnPrimary        = Color.White
@@ -22,4 +25,6 @@ val FairPathDarkSurface          = Color(0xFF1E293B)
 val FairPathDarkOnSurface        = Color(0xFFF1F5F9)
 val FairPathDarkOnSurfaceVariant = Color(0xFF94A3B8)
 val FairPathDarkOutline          = Color(0xFF334155)
-val FairPathDarkInputBackground  = Color(0xFF2A3445)
+val FairPathDarkInputBackground       = Color(0xFF2A3445)
+val FairPathDarkSecondaryContainer    = Color(0xFF2A3445)
+val FairPathDarkOnSecondaryContainer  = Color(0xFFF1F5F9)
