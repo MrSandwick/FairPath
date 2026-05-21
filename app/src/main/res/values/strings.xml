@@ -73,6 +73,7 @@
     <!-- Follow-up screen -->
     <string name="follow_up_title">Follow-up Template</string>
     <string name="follow_up_instructions">Customize this template before sending. Placeholder text will be replaced with contact details.</string>
+    <string name="follow_up_message_hint">Write your follow-up message…</string>
     <string name="send_later">Send Later</string>
     <string name="schedule_tomorrow">Tomorrow</string>
     <string name="schedule_next_business_day">Next Business Day</string>
@@ -84,4 +85,9 @@
     <string name="email_signature_description">Add your signature to automatically include in follow-ups</string>
     <string name="hint_signature">Your Name\nYour Title\nyour.email@example.com\n(555) 123–4567</string>
     <string name="button_save_signature">Save Signature</string>
+    <string name="sig_label_name">Name</string>
+    <string name="sig_label_title">Title / Role</string>
+    <string name="sig_hint_name">Your name</string>
+    <string name="sig_hint_title">Your title or role</string>
+    <string name="sig_preview_label">Signature Preview</string>
 </resources>
