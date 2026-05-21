@@ -34,7 +34,7 @@
     <string name="field_email">Email</string>
     <string name="hint_email">email@example.com</string>
     <string name="field_phone">Phone</string>
-    <string name="hint_phone">+1 (555) 000-0000</string>
+    <string name="hint_phone">+1 (555)000–0000</string>
     <string name="field_quick_note">Quick Note (optional)</string>
     <string name="hint_quick_note">Add a quick note about your conversation…</string>
     <string name="field_tags">Tags</string>
@@ -82,6 +82,6 @@
     <string name="button_copy_to_clipboard">Copy to Clipboard</string>
     <string name="email_signature_title">Email Signature</string>
     <string name="email_signature_description">Add your signature to automatically include in follow-ups</string>
-    <string name="hint_signature">Your Name\nYour Title\nyour.email@example.com\n(555) 123-4567</string>
+    <string name="hint_signature">Your Name\nYour Title\nyour.email@example.com\n(555) 123–4567</string>
     <string name="button_save_signature">Save Signature</string>
 </resources>
