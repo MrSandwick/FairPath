@@ -17,6 +17,9 @@
     <string name="contacts_title">Contacts</string>
     <string name="search_contacts">Search contacts…</string>
     <string name="sort_most_recent">Most Recent</string>
+    <string name="sort_name_asc">Name A → Z</string>
+    <string name="sort_name_desc">Name Z → A</string>
+    <string name="sort_company">Company</string>
     <string name="no_contacts_yet">No contacts yet</string>
     <string name="no_contacts_description">Scan your first business card to get started</string>
 
