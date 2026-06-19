@@ -28,8 +28,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -37,10 +39,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.fairpath.R
 import com.example.fairpath.data.db.DatabaseProvider
+import com.example.fairpath.export.CsvExporter
+import com.example.fairpath.export.EmailSender
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExportScreen(navController: NavController) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val repository = DatabaseProvider.getRepository()
     val contacts by repository.contacts.collectAsStateWithLifecycle(initialValue = emptyList())
     val contactCount = contacts.size
@@ -108,7 +117,14 @@ fun ExportScreen(navController: NavController) {
                 description = stringResource(R.string.export_csv_description),
                 buttonLabel = stringResource(R.string.button_download_csv),
                 enabled = contactCount > 0,
-                onClick = {}
+                onClick = {
+                    scope.launch(Dispatchers.IO) {
+                        val uri = CsvExporter.generate(context, contacts)
+                        withContext(Dispatchers.Main) {
+                            EmailSender.sendCsv(context, uri)
+                        }
+                    }
+                }
             )
 
             // VCF export card

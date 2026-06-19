@@ -1,5 +1,8 @@
 package com.example.fairpath.screens
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -49,10 +53,12 @@ import androidx.navigation.NavController
 import com.example.fairpath.R
 import com.example.fairpath.data.Signature
 import com.example.fairpath.data.SignatureRepository
+import com.example.fairpath.export.EmailSender
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FollowUpScreen(navController: NavController) {
+    val context = LocalContext.current
     var message by remember { mutableStateOf("") }
     var showSignatureDialog by remember { mutableStateOf(false) }
 
@@ -196,7 +202,9 @@ fun FollowUpScreen(navController: NavController) {
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 OutlinedButton(
-                    onClick = {},
+                    onClick = {
+                        EmailSender.sendFollowUp(context, "", "", fullText)
+                    },
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(
@@ -209,7 +217,11 @@ fun FollowUpScreen(navController: NavController) {
                     Text(stringResource(R.string.button_share))
                 }
                 Button(
-                    onClick = {},
+                    onClick = {
+                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        val clip = ClipData.newPlainText("follow_up", fullText)
+                        clipboard.setPrimaryClip(clip)
+                    },
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(
