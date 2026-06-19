@@ -30,20 +30,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.fairpath.FairPathApplication
 import com.example.fairpath.R
+import com.example.fairpath.data.db.DatabaseProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExportScreen(navController: NavController) {
-    val context = LocalContext.current
-    val repository = (context.applicationContext as FairPathApplication).contactRepository
+    val repository = DatabaseProvider.getRepository()
     val contacts by repository.contacts.collectAsStateWithLifecycle(initialValue = emptyList())
     val contactCount = contacts.size
 
