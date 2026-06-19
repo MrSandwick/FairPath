@@ -49,21 +49,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.fairpath.FairPathApplication
 import com.example.fairpath.R
+import com.example.fairpath.data.db.DatabaseProvider
 import com.example.fairpath.navigation.Screen
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun ContactCardScreen(navController: NavController, contactId: String) {
-    val context = LocalContext.current
-    val repository = (context.applicationContext as FairPathApplication).contactRepository
+    val repository = DatabaseProvider.getRepository()
     val scope = rememberCoroutineScope()
 
     var initialContact by remember { mutableStateOf<com.example.fairpath.data.Contact?>(null) }
