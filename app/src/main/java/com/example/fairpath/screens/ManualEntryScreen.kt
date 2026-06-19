@@ -35,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -42,12 +43,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.fairpath.R
 import com.example.fairpath.data.Contact
-import com.example.fairpath.data.ContactRepository
+import com.example.fairpath.data.db.DatabaseProvider
 import com.example.fairpath.navigation.Screen
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun ManualEntryScreen(navController: NavController) {
+    val repository = DatabaseProvider.getRepository()
+    val scope = rememberCoroutineScope()
+
     var name by remember { mutableStateOf("") }
     var company by remember { mutableStateOf("") }
     var role by remember { mutableStateOf("") }
@@ -227,14 +232,16 @@ fun ManualEntryScreen(navController: NavController) {
                         name = name.trim(),
                         company = company.trim(),
                         role = role.trim(),
-                        email = email.trim(),
+                        email = email.trim().ifBlank { null },
                         phone = phone.trim(),
                         note = note.trim(),
                         tags = appliedTags.toList()
                     )
-                    ContactRepository.add(newContact)
-                    navController.navigate(Screen.ContactCard.createRoute(newContact.id)) {
-                        popUpTo(Screen.ManualEntry.route) { inclusive = true }
+                    scope.launch {
+                        repository.add(newContact)
+                        navController.navigate(Screen.ContactCard.createRoute(newContact.id)) {
+                            popUpTo(Screen.ManualEntry.route) { inclusive = true }
+                        }
                     }
                 },
                 enabled = name.isNotBlank(),

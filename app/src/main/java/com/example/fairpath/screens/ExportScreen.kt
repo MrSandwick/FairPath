@@ -27,19 +27,23 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.fairpath.R
-import com.example.fairpath.data.ContactRepository
+import com.example.fairpath.data.db.DatabaseProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExportScreen(navController: NavController) {
-    val contactCount = ContactRepository.contacts.size
+    val repository = DatabaseProvider.getRepository()
+    val contacts by repository.contacts.collectAsStateWithLifecycle(initialValue = emptyList())
+    val contactCount = contacts.size
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,

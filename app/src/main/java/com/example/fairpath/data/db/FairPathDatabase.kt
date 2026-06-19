@@ -1,0 +1,28 @@
+package com.example.fairpath.data.db
+
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.example.fairpath.data.Contact
+
+@Database(entities = [Contact::class], version = 1, exportSchema = false)
+@TypeConverters(ContactTypeConverters::class)
+abstract class FairPathDatabase : RoomDatabase() {
+    abstract fun contactDao(): ContactDao
+
+    companion object {
+        @Volatile
+        private var INSTANCE: FairPathDatabase? = null
+
+        fun getInstance(context: Context): FairPathDatabase =
+            INSTANCE ?: synchronized(this) {
+                INSTANCE ?: Room.databaseBuilder(
+                    context.applicationContext,
+                    FairPathDatabase::class.java,
+                    "fairpath.db"
+                ).build().also { INSTANCE = it }
+            }
+    }
+}
