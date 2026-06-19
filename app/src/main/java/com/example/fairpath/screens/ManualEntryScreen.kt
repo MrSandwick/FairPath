@@ -38,21 +38,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.fairpath.FairPathApplication
 import com.example.fairpath.R
 import com.example.fairpath.data.Contact
+import com.example.fairpath.data.db.DatabaseProvider
 import com.example.fairpath.navigation.Screen
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun ManualEntryScreen(navController: NavController) {
-    val context = LocalContext.current
-    val repository = (context.applicationContext as FairPathApplication).contactRepository
+    val repository = DatabaseProvider.getRepository()
     val scope = rememberCoroutineScope()
 
     var name by remember { mutableStateOf("") }
