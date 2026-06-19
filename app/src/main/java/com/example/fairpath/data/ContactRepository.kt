@@ -1,18 +1,20 @@
 package com.example.fairpath.data
 
-import androidx.compose.runtime.mutableStateListOf
+import com.example.fairpath.data.db.ContactDao
+import kotlinx.coroutines.flow.Flow
 
-object ContactRepository {
-    val contacts = mutableStateListOf<Contact>()
+class ContactRepository(private val dao: ContactDao) {
+    val contacts: Flow<List<Contact>> = dao.getAll()
 
-    fun add(contact: Contact) { contacts.add(contact) }
+    suspend fun add(contact: Contact) = dao.insert(contact)
 
-    fun remove(id: String) { contacts.removeAll { it.id == id } }
+    suspend fun remove(contact: Contact) = dao.delete(contact)
 
-    fun getById(id: String): Contact? = contacts.find { it.id == id }
+    suspend fun getById(id: String): Contact? = dao.getById(id)
 
-    fun updateNote(id: String, note: String) {
-        val index = contacts.indexOfFirst { it.id == id }
-        if (index != -1) contacts[index] = contacts[index].copy(note = note)
+    suspend fun updateNote(id: String, note: String) {
+        dao.getById(id)?.let {
+            dao.update(it.copy(note = note, updatedAt = System.currentTimeMillis()))
+        }
     }
 }

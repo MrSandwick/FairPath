@@ -43,29 +43,47 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.fairpath.FairPathApplication
 import com.example.fairpath.R
-import com.example.fairpath.data.ContactRepository
 import com.example.fairpath.navigation.Screen
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun ContactCardScreen(navController: NavController, contactId: String) {
-    val initialContact = remember(contactId) { ContactRepository.getById(contactId) }
+    val context = LocalContext.current
+    val repository = (context.applicationContext as FairPathApplication).contactRepository
+    val scope = rememberCoroutineScope()
+
+    var initialContact by remember { mutableStateOf<com.example.fairpath.data.Contact?>(null) }
+    var note by remember { mutableStateOf("") }
+
+    LaunchedEffect(contactId) {
+        scope.launch {
+            val contact = repository.getById(contactId)
+            initialContact = contact
+            if (contact != null) {
+                note = contact.note
+            }
+        }
+    }
+
     if (initialContact == null) {
-        LaunchedEffect(Unit) { navController.popBackStack() }
         return
     }
 
-    var note by remember { mutableStateOf(initialContact.note) }
+    val contact = initialContact!!
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -80,8 +98,10 @@ fun ContactCardScreen(navController: NavController, contactId: String) {
                 actions = {
                     IconButton(
                         onClick = {
-                            ContactRepository.remove(contactId)
-                            navController.popBackStack()
+                            scope.launch {
+                                repository.remove(contact)
+                                navController.popBackStack()
+                            }
                         }
                     ) {
                         Icon(
@@ -117,62 +137,62 @@ fun ContactCardScreen(navController: NavController, contactId: String) {
                     verticalArrangement = Arrangement.spacedBy(32.dp)
                 ) {
                     Text(
-                        text = initialContact.name,
+                        text = contact.name,
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
 
-                    val hasInfoRows = initialContact.role.isNotBlank() ||
-                        initialContact.company.isNotBlank() ||
-                        initialContact.email.isNotBlank() ||
-                        initialContact.phone.isNotBlank()
+                    val hasInfoRows = contact.role.isNotBlank() ||
+                        contact.company.isNotBlank() ||
+                        (contact.email?.isNotBlank() ?: false) ||
+                        contact.phone.isNotBlank()
 
                     if (hasInfoRows) {
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            if (initialContact.role.isNotBlank()) {
+                            if (contact.role.isNotBlank()) {
                                 ContactInfoRow(
                                     icon = Icons.Default.Work,
                                     label = stringResource(R.string.label_role),
-                                    value = initialContact.role,
+                                    value = contact.role,
                                     isLink = false
                                 )
                             }
-                            if (initialContact.company.isNotBlank()) {
+                            if (contact.company.isNotBlank()) {
                                 ContactInfoRow(
                                     icon = Icons.Default.Business,
                                     label = stringResource(R.string.label_company),
-                                    value = initialContact.company,
+                                    value = contact.company,
                                     isLink = false
                                 )
                             }
-                            if (initialContact.email.isNotBlank()) {
+                            if (contact.email?.isNotBlank() == true) {
                                 ContactInfoRow(
                                     icon = Icons.Default.Email,
                                     label = stringResource(R.string.label_email),
-                                    value = initialContact.email,
+                                    value = contact.email,
                                     isLink = true
                                 )
                             }
-                            if (initialContact.phone.isNotBlank()) {
+                            if (contact.phone.isNotBlank()) {
                                 ContactInfoRow(
                                     icon = Icons.Default.Phone,
                                     label = stringResource(R.string.label_phone),
-                                    value = initialContact.phone,
+                                    value = contact.phone,
                                     isLink = true
                                 )
                             }
                         }
                     }
 
-                    if (initialContact.tags.isNotEmpty()) {
+                    if (contact.tags.isNotEmpty()) {
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             HorizontalDivider(
                                 color = MaterialTheme.colorScheme.outline,
                                 thickness = 1.dp
                             )
                             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                initialContact.tags.forEach { tag ->
+                                contact.tags.forEach { tag ->
                                     ContactTag(text = tag)
                                 }
                             }
@@ -201,7 +221,9 @@ fun ContactCardScreen(navController: NavController, contactId: String) {
                         value = note,
                         onValueChange = { newNote ->
                             note = newNote
-                            ContactRepository.updateNote(contactId, newNote)
+                            scope.launch {
+                                repository.updateNote(contactId, newNote)
+                            }
                         },
                         modifier = Modifier.fillMaxWidth(),
                         placeholder = { Text(stringResource(R.string.hint_quick_note_card)) },
