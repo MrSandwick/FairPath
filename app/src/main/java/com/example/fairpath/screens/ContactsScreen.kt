@@ -44,13 +44,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.fairpath.FairPathApplication
 import com.example.fairpath.R
 import com.example.fairpath.data.Contact
-import com.example.fairpath.data.ContactRepository
 import com.example.fairpath.navigation.Screen
 
 private enum class SortOrder(@StringRes val labelRes: Int) {
@@ -63,6 +65,10 @@ private enum class SortOrder(@StringRes val labelRes: Int) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContactsScreen(navController: NavController) {
+    val context = LocalContext.current
+    val repository = (context.applicationContext as FairPathApplication).contactRepository
+    val contacts by repository.contacts.collectAsStateWithLifecycle(initialValue = emptyList())
+
     var query by remember { mutableStateOf("") }
     var sortOrder by remember { mutableStateOf(SortOrder.MOST_RECENT) }
     var showSortMenu by remember { mutableStateOf(false) }
@@ -70,16 +76,16 @@ fun ContactsScreen(navController: NavController) {
     val filtered by remember {
         derivedStateOf {
             val base = if (query.isBlank()) {
-                ContactRepository.contacts.toList()
+                contacts
             } else {
-                ContactRepository.contacts.filter {
+                contacts.filter {
                     it.name.contains(query, ignoreCase = true) ||
                         it.role.contains(query, ignoreCase = true) ||
                         it.company.contains(query, ignoreCase = true)
                 }
             }
             when (sortOrder) {
-                SortOrder.MOST_RECENT -> base.reversed()
+                SortOrder.MOST_RECENT -> base.sortedByDescending { it.createdAt }
                 SortOrder.NAME_ASC    -> base.sortedBy { it.name.lowercase() }
                 SortOrder.NAME_DESC   -> base.sortedByDescending { it.name.lowercase() }
                 SortOrder.COMPANY     -> base.sortedBy { it.company.lowercase() }
