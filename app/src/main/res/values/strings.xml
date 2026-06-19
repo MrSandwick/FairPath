@@ -9,9 +9,11 @@
     <string name="export">Export</string>
     <string name="follow_up">Follow-up</string>
 
-    <!-- Scan / camera placeholder -->
+    <!-- Scan / camera -->
     <string name="scan_camera_coming_soon">Camera scanning coming soon</string>
+    <string name="scan_camera_permission">Grant camera permission to scan QR codes</string>
     <string name="scan_enter_manually">Enter Manually</string>
+    <string name="button_grant_permission">Grant Permission</string>
 
     <!-- Contacts screen -->
     <string name="contacts_title">Contacts</string>
