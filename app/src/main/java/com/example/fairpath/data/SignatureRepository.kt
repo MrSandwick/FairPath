@@ -1,19 +1,21 @@
 package com.example.fairpath.data
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import com.example.fairpath.data.db.SignatureDao
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
-object SignatureRepository {
-    var signature by mutableStateOf(Signature())
-        private set
+class SignatureRepository(private val dao: SignatureDao) {
+    val signature: Flow<Signature> = dao.observe().map { it ?: Signature() }
 
-    fun update(name: String, title: String, email: String, phone: String) {
-        signature = Signature(
-            name = name.trim(),
-            title = title.trim(),
-            email = email.trim(),
-            phone = phone.trim()
+    suspend fun update(name: String, title: String, email: String, phone: String) {
+        dao.upsert(
+            Signature(
+                id = Signature.SINGLETON_ID,
+                name = name.trim(),
+                title = title.trim(),
+                email = email.trim(),
+                phone = phone.trim()
+            )
         )
     }
 }

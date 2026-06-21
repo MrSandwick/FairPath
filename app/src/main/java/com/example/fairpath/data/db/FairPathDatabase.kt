@@ -6,11 +6,13 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.fairpath.data.Contact
+import com.example.fairpath.data.Signature
 
-@Database(entities = [Contact::class], version = 1, exportSchema = false)
+@Database(entities = [Contact::class, Signature::class], version = 2, exportSchema = false)
 @TypeConverters(ContactTypeConverters::class)
 abstract class FairPathDatabase : RoomDatabase() {
     abstract fun contactDao(): ContactDao
+    abstract fun signatureDao(): SignatureDao
 
     companion object {
         @Volatile
@@ -22,7 +24,10 @@ abstract class FairPathDatabase : RoomDatabase() {
                     context.applicationContext,
                     FairPathDatabase::class.java,
                     "fairpath.db"
-                ).build().also { INSTANCE = it }
+                )
+                    .fallbackToDestructiveMigration(dropAllTables = true)
+                    .build()
+                    .also { INSTANCE = it }
             }
     }
 }
