@@ -40,9 +40,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,8 +56,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.fairpath.R
 import com.example.fairpath.data.Signature
-import com.example.fairpath.data.SignatureRepository
+import com.example.fairpath.data.db.DatabaseProvider
 import com.example.fairpath.export.EmailSender
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,7 +67,9 @@ fun FollowUpScreen(navController: NavController) {
     var message by remember { mutableStateOf("") }
     var showSignatureDialog by remember { mutableStateOf(false) }
 
-    val sig = SignatureRepository.signature
+    val signatureRepo = remember { DatabaseProvider.getSignatureRepository() }
+    val sig by signatureRepo.signature.collectAsState(initial = Signature())
+    val scope = rememberCoroutineScope()
     val fullText = if (sig.hasContent) "$message\n\n--\n${sig.formatted}" else message
 
     val fieldColors = OutlinedTextFieldDefaults.colors(
@@ -268,7 +273,9 @@ fun FollowUpScreen(navController: NavController) {
         EmailSignatureDialog(
             current = sig,
             onSave = { name, title, email, phone ->
-                SignatureRepository.update(name, title, email, phone)
+                scope.launch {
+                    signatureRepo.update(name, title, email, phone)
+                }
                 showSignatureDialog = false
             },
             onDismiss = { showSignatureDialog = false },
