@@ -5,8 +5,10 @@ import android.content.ClipboardManager
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -172,7 +174,9 @@ fun FollowUpScreen(navController: NavController) {
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(IntrinsicSize.Max),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         listOf(
@@ -182,9 +186,16 @@ fun FollowUpScreen(navController: NavController) {
                         ).forEach { label ->
                             OutlinedButton(
                                 onClick = {},
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
                             ) {
-                                Text(label, style = MaterialTheme.typography.labelSmall)
+                                Text(
+                                    label,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 2
+                                )
                             }
                         }
                     }
@@ -198,14 +209,18 @@ fun FollowUpScreen(navController: NavController) {
             }
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 OutlinedButton(
                     onClick = {
                         EmailSender.sendFollowUp(context, "", "", fullText)
                     },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
                 ) {
                     Icon(
                         Icons.Default.Share,
@@ -214,7 +229,11 @@ fun FollowUpScreen(navController: NavController) {
                             .size(ButtonDefaults.IconSize)
                             .padding(end = 4.dp)
                     )
-                    Text(stringResource(R.string.button_share))
+                    Text(
+                        stringResource(R.string.button_share),
+                        textAlign = TextAlign.Center,
+                        maxLines = 2
+                    )
                 }
                 Button(
                     onClick = {
@@ -222,7 +241,9 @@ fun FollowUpScreen(navController: NavController) {
                         val clip = ClipData.newPlainText("follow_up", fullText)
                         clipboard.setPrimaryClip(clip)
                     },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
                 ) {
                     Icon(
                         Icons.Default.ContentCopy,
@@ -231,7 +252,11 @@ fun FollowUpScreen(navController: NavController) {
                             .size(ButtonDefaults.IconSize)
                             .padding(end = 4.dp)
                     )
-                    Text(stringResource(R.string.button_copy_to_clipboard))
+                    Text(
+                        stringResource(R.string.button_copy_to_clipboard),
+                        textAlign = TextAlign.Center,
+                        maxLines = 2
+                    )
                 }
             }
 
