@@ -49,15 +49,22 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun ManualEntryScreen(navController: NavController) {
+fun ManualEntryScreen(
+    navController: NavController,
+    prefillName: String = "",
+    prefillEmail: String = "",
+    prefillPhone: String = "",
+    prefillCompany: String = "",
+    prefillRole: String = ""
+) {
     val repository = DatabaseProvider.getRepository()
     val scope = rememberCoroutineScope()
 
-    var name by remember { mutableStateOf("") }
-    var company by remember { mutableStateOf("") }
-    var role by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf(prefillName) }
+    var company by remember { mutableStateOf(prefillCompany) }
+    var role by remember { mutableStateOf(prefillRole) }
+    var email by remember { mutableStateOf(prefillEmail) }
+    var phone by remember { mutableStateOf(prefillPhone) }
     var note by remember { mutableStateOf("") }
     var customTag by remember { mutableStateOf("") }
     val appliedTags = remember { mutableStateListOf<String>() }

@@ -15,12 +15,20 @@ import com.example.fairpath.screens.ManualEntryScreen
 import com.example.fairpath.screens.ScanScreen
 
 sealed class Screen(val route: String) {
-    object Home        : Screen("home")
-    object Scan        : Screen("scan")
-    object ManualEntry : Screen("manual_entry")
-    object Contacts    : Screen("contacts")
-    object Export      : Screen("export")
-    object FollowUp    : Screen("follow_up")
+    object Home : Screen("home")
+    object Scan : Screen("scan")
+    object ManualEntry : Screen("manual_entry?name={name}&email={email}&phone={phone}&company={company}&role={role}") {
+        fun createRoute(
+            name: String = "",
+            email: String = "",
+            phone: String = "",
+            company: String = "",
+            role: String = ""
+        ) = "manual_entry?name=$name&email=$email&phone=$phone&company=$company&role=$role"
+    }
+    object Contacts : Screen("contacts")
+    object Export   : Screen("export")
+    object FollowUp : Screen("follow_up")
     object ContactCard : Screen("contact_card/{contactId}") {
         fun createRoute(contactId: String) = "contact_card/$contactId"
     }
@@ -39,8 +47,31 @@ fun AppNavigation() {
                 onFollowUpClick = { navController.navigate(Screen.FollowUp.route) }
             )
         }
-        composable(Screen.Scan.route)        { ScanScreen(navController) }
-        composable(Screen.ManualEntry.route) { ManualEntryScreen(navController) }
+        composable(Screen.Scan.route) { ScanScreen(navController) }
+        composable(
+            route = Screen.ManualEntry.route,
+            arguments = listOf(
+                navArgument("name") { type = NavType.StringType; defaultValue = "" },
+                navArgument("email") { type = NavType.StringType; defaultValue = "" },
+                navArgument("phone") { type = NavType.StringType; defaultValue = "" },
+                navArgument("company") { type = NavType.StringType; defaultValue = "" },
+                navArgument("role") { type = NavType.StringType; defaultValue = "" }
+            )
+        ) { backStackEntry ->
+            val name = backStackEntry.arguments?.getString("name") ?: ""
+            val email = backStackEntry.arguments?.getString("email") ?: ""
+            val phone = backStackEntry.arguments?.getString("phone") ?: ""
+            val company = backStackEntry.arguments?.getString("company") ?: ""
+            val role = backStackEntry.arguments?.getString("role") ?: ""
+            ManualEntryScreen(
+                navController = navController,
+                prefillName = name,
+                prefillEmail = email,
+                prefillPhone = phone,
+                prefillCompany = company,
+                prefillRole = role
+            )
+        }
         composable(Screen.Contacts.route)    { ContactsScreen(navController) }
         composable(Screen.Export.route)      { ExportScreen(navController) }
         composable(Screen.FollowUp.route)    { FollowUpScreen(navController) }
