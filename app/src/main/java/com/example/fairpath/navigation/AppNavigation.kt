@@ -17,14 +17,17 @@ import com.example.fairpath.screens.ScanScreen
 sealed class Screen(val route: String) {
     object Home : Screen("home")
     object Scan : Screen("scan")
-    object ManualEntry : Screen("manual_entry?name={name}&email={email}&phone={phone}&company={company}&role={role}") {
+    object ManualEntry : Screen("manual_entry?name={name}&email={email}&phone={phone}&company={company}&role={role}&editContactId={editContactId}") {
         fun createRoute(
             name: String = "",
             email: String = "",
             phone: String = "",
             company: String = "",
-            role: String = ""
-        ) = "manual_entry?name=$name&email=$email&phone=$phone&company=$company&role=$role"
+            role: String = "",
+            editContactId: String = ""
+        ) = "manual_entry?name=$name&email=$email&phone=$phone&company=$company&role=$role&editContactId=$editContactId"
+
+        fun editRoute(contactId: String) = "manual_entry?editContactId=$contactId"
     }
     object Contacts : Screen("contacts")
     object Export   : Screen("export")
@@ -55,7 +58,8 @@ fun AppNavigation() {
                 navArgument("email") { type = NavType.StringType; defaultValue = "" },
                 navArgument("phone") { type = NavType.StringType; defaultValue = "" },
                 navArgument("company") { type = NavType.StringType; defaultValue = "" },
-                navArgument("role") { type = NavType.StringType; defaultValue = "" }
+                navArgument("role") { type = NavType.StringType; defaultValue = "" },
+                navArgument("editContactId") { type = NavType.StringType; defaultValue = "" }
             )
         ) { backStackEntry ->
             val name = backStackEntry.arguments?.getString("name") ?: ""
@@ -63,13 +67,15 @@ fun AppNavigation() {
             val phone = backStackEntry.arguments?.getString("phone") ?: ""
             val company = backStackEntry.arguments?.getString("company") ?: ""
             val role = backStackEntry.arguments?.getString("role") ?: ""
+            val editContactId = backStackEntry.arguments?.getString("editContactId") ?: ""
             ManualEntryScreen(
                 navController = navController,
                 prefillName = name,
                 prefillEmail = email,
                 prefillPhone = phone,
                 prefillCompany = company,
-                prefillRole = role
+                prefillRole = role,
+                editContactId = editContactId
             )
         }
         composable(Screen.Contacts.route)    { ContactsScreen(navController) }

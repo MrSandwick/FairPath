@@ -20,6 +20,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Work
@@ -45,6 +46,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -64,24 +66,19 @@ fun ContactCardScreen(navController: NavController, contactId: String) {
     val repository = DatabaseProvider.getRepository()
     val scope = rememberCoroutineScope()
 
-    var initialContact by remember { mutableStateOf<com.example.fairpath.data.Contact?>(null) }
+    val observedContact by repository.observeById(contactId).collectAsStateWithLifecycle(initialValue = null)
     var note by remember { mutableStateOf("") }
+    var noteSeeded by remember { mutableStateOf(false) }
 
-    LaunchedEffect(contactId) {
-        scope.launch {
-            val contact = repository.getById(contactId)
-            initialContact = contact
-            if (contact != null) {
-                note = contact.note
-            }
+    LaunchedEffect(observedContact?.id) {
+        val loaded = observedContact
+        if (loaded != null && !noteSeeded) {
+            note = loaded.note
+            noteSeeded = true
         }
     }
 
-    if (initialContact == null) {
-        return
-    }
-
-    val contact = initialContact!!
+    val contact = observedContact ?: return
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -94,6 +91,17 @@ fun ContactCardScreen(navController: NavController, contactId: String) {
                     }
                 },
                 actions = {
+                    IconButton(
+                        onClick = {
+                            navController.navigate(Screen.ManualEntry.editRoute(contactId))
+                        }
+                    ) {
+                        Icon(
+                            Icons.Default.Edit,
+                            contentDescription = stringResource(R.string.edit_contact),
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                     IconButton(
                         onClick = {
                             scope.launch {
