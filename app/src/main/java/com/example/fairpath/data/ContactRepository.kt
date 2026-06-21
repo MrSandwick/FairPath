@@ -12,6 +12,12 @@ class ContactRepository(private val dao: ContactDao) {
 
     suspend fun getById(id: String): Contact? = dao.getById(id)
 
+    fun observeById(id: String): Flow<Contact?> = dao.observeById(id)
+
+    suspend fun update(contact: Contact) {
+        dao.update(contact.copy(updatedAt = System.currentTimeMillis()))
+    }
+
     suspend fun updateNote(id: String, note: String) {
         dao.getById(id)?.let {
             dao.update(it.copy(note = note, updatedAt = System.currentTimeMillis()))

@@ -31,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -55,10 +56,12 @@ fun ManualEntryScreen(
     prefillEmail: String = "",
     prefillPhone: String = "",
     prefillCompany: String = "",
-    prefillRole: String = ""
+    prefillRole: String = "",
+    editContactId: String = ""
 ) {
     val repository = DatabaseProvider.getRepository()
     val scope = rememberCoroutineScope()
+    val isEditing = editContactId.isNotBlank()
 
     var name by remember { mutableStateOf(prefillName) }
     var company by remember { mutableStateOf(prefillCompany) }
@@ -68,6 +71,23 @@ fun ManualEntryScreen(
     var note by remember { mutableStateOf("") }
     var customTag by remember { mutableStateOf("") }
     val appliedTags = remember { mutableStateListOf<String>() }
+    var editingContact by remember { mutableStateOf<Contact?>(null) }
+
+    LaunchedEffect(editContactId) {
+        if (isEditing) {
+            repository.getById(editContactId)?.let { existing ->
+                editingContact = existing
+                name = existing.name
+                company = existing.company
+                role = existing.role
+                email = existing.email.orEmpty()
+                phone = existing.phone
+                note = existing.note
+                appliedTags.clear()
+                appliedTags.addAll(existing.tags)
+            }
+        }
+    }
 
     val suggestedTags = listOf(
         stringResource(R.string.tag_high_priority),
@@ -85,7 +105,13 @@ fun ManualEntryScreen(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.review_contact)) },
+                title = {
+                    Text(
+                        stringResource(
+                            if (isEditing) R.string.edit_contact_title else R.string.review_contact
+                        )
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
@@ -235,26 +261,46 @@ fun ManualEntryScreen(
 
             Button(
                 onClick = {
-                    val newContact = Contact(
-                        name = name.trim(),
-                        company = company.trim(),
-                        role = role.trim(),
-                        email = email.trim().ifBlank { null },
-                        phone = phone.trim(),
-                        note = note.trim(),
-                        tags = appliedTags.toList()
-                    )
                     scope.launch {
-                        repository.add(newContact)
-                        navController.navigate(Screen.ContactCard.createRoute(newContact.id)) {
-                            popUpTo(Screen.ManualEntry.route) { inclusive = true }
+                        val original = editingContact
+                        if (isEditing && original != null) {
+                            repository.update(
+                                original.copy(
+                                    name = name.trim(),
+                                    company = company.trim(),
+                                    role = role.trim(),
+                                    email = email.trim().ifBlank { null },
+                                    phone = phone.trim(),
+                                    note = note.trim(),
+                                    tags = appliedTags.toList()
+                                )
+                            )
+                            navController.popBackStack()
+                        } else {
+                            val newContact = Contact(
+                                name = name.trim(),
+                                company = company.trim(),
+                                role = role.trim(),
+                                email = email.trim().ifBlank { null },
+                                phone = phone.trim(),
+                                note = note.trim(),
+                                tags = appliedTags.toList()
+                            )
+                            repository.add(newContact)
+                            navController.navigate(Screen.ContactCard.createRoute(newContact.id)) {
+                                popUpTo(Screen.ManualEntry.route) { inclusive = true }
+                            }
                         }
                     }
                 },
                 enabled = name.isNotBlank(),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(stringResource(R.string.button_save_contact))
+                Text(
+                    stringResource(
+                        if (isEditing) R.string.button_save_changes else R.string.button_save_contact
+                    )
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))

@@ -17,6 +17,9 @@ interface ContactDao {
     @Query("SELECT * FROM contacts WHERE id = :id")
     suspend fun getById(id: String): Contact?
 
+    @Query("SELECT * FROM contacts WHERE id = :id")
+    fun observeById(id: String): Flow<Contact?>
+
     @Query("SELECT * FROM contacts WHERE name LIKE '%' || :q || '%' OR company LIKE '%' || :q || '%' OR email LIKE '%' || :q || '%'")
     fun search(q: String): Flow<List<Contact>>
 

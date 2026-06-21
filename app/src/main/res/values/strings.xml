@@ -47,6 +47,8 @@
     <string name="hint_custom_tag">Add custom tag</string>
     <string name="tags_helper">Add tags to organize and find contacts easily</string>
     <string name="button_save_contact">Save Contact</string>
+    <string name="edit_contact_title">Edit Contact</string>
+    <string name="button_save_changes">Save Changes</string>
 
     <!-- Export screen -->
     <string name="export_title">Export Contacts</string>
@@ -63,6 +65,7 @@
     <!-- Contact Card screen -->
     <string name="contact_details_title">Contact Details</string>
     <string name="delete_contact">Delete contact</string>
+    <string name="edit_contact">Edit contact</string>
     <string name="label_role">Role</string>
     <string name="label_company">Company</string>
     <string name="label_email">Email</string>
