@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.fairpath.R
+import com.example.fairpath.ui.AdaptiveContainer
 import com.example.fairpath.ui.theme.FairPathTheme
 
 @Composable
@@ -33,6 +34,9 @@ fun HomeScreen(
     onExportClick:   () -> Unit = {},
     onFollowUpClick: () -> Unit = {}
 ) {
+    AdaptiveContainer(
+        modifier = Modifier.background(MaterialTheme.colorScheme.background)
+    ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -129,6 +133,7 @@ fun HomeScreen(
             }
         }
     }
+    }
 }
 
 @Composable
@@ -180,6 +185,8 @@ private fun SecondaryActionButton(
 @Composable
 fun HomeScreenPreview() {
     FairPathTheme {
-        HomeScreen(navController = rememberNavController())
+        com.example.fairpath.ui.PreviewWithWindowSizeClass {
+            HomeScreen(navController = rememberNavController())
+        }
     }
 }

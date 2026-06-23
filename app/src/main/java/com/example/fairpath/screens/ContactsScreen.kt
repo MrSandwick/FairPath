@@ -53,6 +53,7 @@ import com.example.fairpath.R
 import com.example.fairpath.data.Contact
 import com.example.fairpath.data.db.DatabaseProvider
 import com.example.fairpath.navigation.Screen
+import com.example.fairpath.ui.AdaptiveContainer
 
 private enum class SortOrder(@StringRes val labelRes: Int) {
     MOST_RECENT(R.string.sort_most_recent),
@@ -108,10 +109,10 @@ fun ContactsScreen(navController: NavController) {
             )
         }
     ) { innerPadding ->
+        AdaptiveContainer(modifier = Modifier.padding(innerPadding)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
                 .padding(horizontal = 16.dp)
         ) {
             OutlinedTextField(
@@ -191,6 +192,7 @@ fun ContactsScreen(navController: NavController) {
                     }
                 }
             }
+        }
         }
     }
 }

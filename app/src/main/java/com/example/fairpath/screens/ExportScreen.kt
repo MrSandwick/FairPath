@@ -41,6 +41,7 @@ import com.example.fairpath.R
 import com.example.fairpath.data.db.DatabaseProvider
 import com.example.fairpath.export.CsvExporter
 import com.example.fairpath.export.EmailSender
+import com.example.fairpath.ui.AdaptiveContainer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -71,10 +72,10 @@ fun ExportScreen(navController: NavController) {
             )
         }
     ) { innerPadding ->
+        AdaptiveContainer(modifier = Modifier.padding(innerPadding)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -144,6 +145,7 @@ fun ExportScreen(navController: NavController) {
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
             }
+        }
         }
     }
 }
