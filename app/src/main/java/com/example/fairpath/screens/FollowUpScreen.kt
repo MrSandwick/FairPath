@@ -58,6 +58,7 @@ import com.example.fairpath.R
 import com.example.fairpath.data.Signature
 import com.example.fairpath.data.db.DatabaseProvider
 import com.example.fairpath.export.EmailSender
+import com.example.fairpath.ui.AdaptiveContainer
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -100,10 +101,10 @@ fun FollowUpScreen(navController: NavController) {
             )
         }
     ) { innerPadding ->
+        AdaptiveContainer(modifier = Modifier.padding(innerPadding)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -266,6 +267,7 @@ fun FollowUpScreen(navController: NavController) {
             }
 
             Spacer(modifier = Modifier.height(8.dp))
+        }
         }
     }
 

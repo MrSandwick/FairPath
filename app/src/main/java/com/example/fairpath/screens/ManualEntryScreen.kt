@@ -46,6 +46,7 @@ import com.example.fairpath.R
 import com.example.fairpath.data.Contact
 import com.example.fairpath.data.db.DatabaseProvider
 import com.example.fairpath.navigation.Screen
+import com.example.fairpath.ui.AdaptiveContainer
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -124,10 +125,10 @@ fun ManualEntryScreen(
             )
         }
     ) { innerPadding ->
+        AdaptiveContainer(modifier = Modifier.padding(innerPadding)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
@@ -304,6 +305,7 @@ fun ManualEntryScreen(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+        }
         }
     }
 }
